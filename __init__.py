@@ -101,7 +101,9 @@ _defaults = dict(
     font_size             = 12,
     font_size_legend      = 9,
     egg_pen_width         = 1,
-    egg_use_opengl        = False,)
+    egg_use_opengl        = False,
+    qt_axis_font_size     = 8,
+    qt_tick_length        = -10)
 
 # Loop over defaults and set them if they don't already exist
 for _k in _defaults:

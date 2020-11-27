@@ -3973,16 +3973,30 @@ class DataboxPlot(_d.databox, GridLayout):
         font.setFixedPitch(True)
         font.setPointSize(10)
         self.script._widget.setFont(font)
+        
+
 
         self._label_script_error = self.place_object(Label('ERRORS GO HERE'), 0,2, column_span=2, alignment=0)
         self._label_script_error.hide()
-
 
         # make sure the plot fills up the most space
         self.set_row_stretch(3)
 
         # plot area
         self.grid_plot = self.place_object(GridLayout(margins=False), 0,3, column_span=self.get_column_count(), alignment=0)
+        
+        # setup font for plotting
+        axis_font = _s._qtw.QFont()
+        axis_font.setFamily("monospace")
+        axis_font.setFixedPitch(True)
+        axis_font.setPointSize(_s.settings['qt_axis_font_size'])
+        self.axis_style = {"tickFont" : axis_font,
+                           "tickTextOffset": _s.settings['qt_axis_font_size']//2,
+                           "tickLength": _s.settings['qt_tick_length'],
+                           "autoExpandTextSpace": True}
+
+        self.label_style = {'color' : 'gray',
+                            'font-size' : "%dpt" % _s.settings['qt_axis_font_size']}
 
         # History area
         self.grid_logger = self.add(GridLayout(margins=False), 0,4, column_span=self.get_column_count(), alignment=0)
@@ -4599,10 +4613,13 @@ class DataboxPlot(_d.databox, GridLayout):
                 if ey[n] is not None:
                     self._errors[n].setData(x=x[n], y=y[n], top=ey[n], bottom=ey[n])
 
-                # set the labels
+                # set the axis and tick labels
                 i = min(n, len(self.plot_widgets)-1)
-                self.plot_widgets[i].setLabel('left',   ylabels[n])
-                self.plot_widgets[i].setLabel('bottom', xlabels[n])
+                
+                self.plot_widgets[i].setLabel('left',   ylabels[n], **self.label_style)
+                self.plot_widgets[i].getAxis('left').setStyle(**self.axis_style)
+                self.plot_widgets[i].setLabel('bottom', xlabels[n], **self.label_style)
+                self.plot_widgets[i].getAxis('bottom').setStyle(**self.axis_style)
 
                 # special case: hide if None
                 if xlabels[n] == None:
